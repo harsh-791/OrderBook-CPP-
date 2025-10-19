@@ -150,16 +150,50 @@ public:
 int main() {
     OrderBook order_book;
     
-    order_book.add_order(1, true, 101.5, 100);
-    order_book.add_order(2, false, 102.0, 50);
-    order_book.add_order(3, true, 103.0, 40);
-    order_book.add_order(4, false, 101.0, 70);
+    cout << "=== OrderBook Testing Suite ===" << endl;
     
-    order_book.amend_order(2, 101.0, 60);
-    
-    order_book.cancel_order(3);
-    
+    cout << "\n1. Adding initial orders..." << endl;
+    order_book.add_order(1, true, 100.0, 1000);
+    order_book.add_order(2, false, 101.0, 500);
+    order_book.add_order(3, true, 99.5, 750);
+    order_book.add_order(4, false, 102.0, 300);
     order_book.print_book();
+    
+    cout << "\n2. Adding orders that should trigger trades..." << endl;
+    order_book.add_order(5, true, 101.5, 200);
+    order_book.add_order(6, false, 100.5, 150);
+    order_book.print_book();
+    
+    cout << "\n3. Testing order amendment..." << endl;
+    cout << "Before amendment:" << endl;
+    order_book.print_book();
+    order_book.amend_order(2, 100.5, 400);
+    cout << "After amending order 2 (price 101.0->100.5, qty 500->400):" << endl;
+    order_book.print_book();
+    
+    cout << "\n4. Testing order cancellation..." << endl;
+    cout << "Before cancellation:" << endl;
+    order_book.print_book();
+    order_book.cancel_order(3);
+    cout << "After cancelling order 3:" << endl;
+    order_book.print_book();
+    
+    cout << "\n5. Testing duplicate order ID (should fail)..." << endl;
+    bool result = order_book.add_order(1, true, 99.0, 100);
+    cout << "Adding duplicate order ID 1: " << (result ? "SUCCESS" : "FAILED (expected)") << endl;
+    
+    cout << "\n6. Testing cancellation of non-existent order..." << endl;
+    result = order_book.cancel_order(999);
+    cout << "Cancelling non-existent order 999: " << (result ? "SUCCESS" : "FAILED (expected)") << endl;
+    
+    cout << "\n7. Testing amendment of non-existent order..." << endl;
+    result = order_book.amend_order(999, 99.0, 100);
+    cout << "Amending non-existent order 999: " << (result ? "SUCCESS" : "FAILED (expected)") << endl;
+    
+    cout << "\n8. Final order book state:" << endl;
+    order_book.print_book();
+    
+    cout << "\n=== Testing Complete ===" << endl;
     
     return 0;
 }
